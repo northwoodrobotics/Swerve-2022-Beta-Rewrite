@@ -2,6 +2,7 @@ package ExternalLib.JackInTheBotLib.control;
 
 import ExternalLib.JackInTheBotLib.math.RigidTransform2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import edu.wpi.first.math.geometry.Pose2d;
 
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public abstract class TrajectoryFollower<DriveSignalType> {
      * @param dt                 the amount of time that has elapsed since the update loop was last ran
      * @return the signal required to follow the trajectory
      */
-    protected abstract DriveSignalType calculateDriveSignal(RigidTransform2 currentPose, Vector2 velocity,
+    protected abstract DriveSignalType calculateDriveSignal(Pose2d currentPose, Vector2 velocity,
                                                             double rotationalVelocity, Trajectory trajectory,
                                                             double time, double dt);
 
@@ -87,7 +88,7 @@ public abstract class TrajectoryFollower<DriveSignalType> {
      * @param dt                 the time since update was last called
      * @return the drive signal required to follow the current path if any
      */
-    public final Optional<DriveSignalType> update(RigidTransform2 currentPose, Vector2 velocity,
+    public final Optional<DriveSignalType> update(Pose2d currentPose, Vector2 velocity,
                                                   double rotationalVelocity, double time, double dt) {
         Trajectory trajectory;
         double timeSinceStart;

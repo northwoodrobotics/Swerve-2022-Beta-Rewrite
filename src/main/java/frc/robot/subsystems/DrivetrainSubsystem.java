@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.Constants;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -80,7 +81,7 @@ private final Object sensorLock = new Object();
     @GuardedBy("kinematicsLock")
     private final SwerveOdometry swerveOdometry = new SwerveOdometry(swerveKinematics, RigidTransform2.ZERO);
     @GuardedBy("kinematicsLock")
-    private RigidTransform2 pose = RigidTransform2.ZERO;
+    private Pose2d pose = RigidTransform2.ZERO;
     @GuardedBy("kinematicsLock")
     private final InterpolatingTreeMap<InterpolatingDouble, RigidTransform2> latencyCompensationMap = new InterpolatingTreeMap<>();
     @GuardedBy("kinematicsLock")
@@ -183,7 +184,7 @@ odometryAngleEntry = tab.add("Angle", 0.0)
     
 
     
-    public RigidTransform2 getPose() {
+    public Pose2d getPose() {
         synchronized (kinematicsLock) {
             return pose;
         }

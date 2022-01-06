@@ -4,6 +4,7 @@ import ExternalLib.JackInTheBotLib.math.RigidTransform2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
 import ExternalLib.JackInTheBotLib.util.HolonomicDriveSignal;
 import ExternalLib.JackInTheBotLib.util.HolonomicFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 
 public class HolonomicMotionProfiledTrajectoryFollower extends TrajectoryFollower<HolonomicDriveSignal> {
     private PidController forwardController;
@@ -28,7 +29,7 @@ public class HolonomicMotionProfiledTrajectoryFollower extends TrajectoryFollowe
     }
 
     @Override
-    protected HolonomicDriveSignal calculateDriveSignal(RigidTransform2 currentPose, Vector2 velocity,
+    protected HolonomicDriveSignal calculateDriveSignal(Pose2d currentPose, Vector2 velocity,
                                                double rotationalVelocity, Trajectory trajectory, double time,
                                                double dt) {
         if (time > trajectory.getDuration()) {
@@ -49,10 +50,10 @@ public class HolonomicMotionProfiledTrajectoryFollower extends TrajectoryFollowe
 
         return new HolonomicDriveSignal(
                 new Vector2(
-                        forwardController.calculate(currentPose.translation.x, dt) + feedforwardVector.x,
-                        strafeController.calculate(currentPose.translation.y, dt) + feedforwardVector.y
+                        forwardController.calculate(currentPose.getX(), dt) + feedforwardVector.x,
+                        strafeController.calculate(currentPose.getY(), dt) + feedforwardVector.y
                 ),
-                rotationController.calculate(currentPose.rotation.toRadians(), dt),
+                rotationController.calculate(currentPose.getRotation().getRadians(), dt),
                 true
         );
     }

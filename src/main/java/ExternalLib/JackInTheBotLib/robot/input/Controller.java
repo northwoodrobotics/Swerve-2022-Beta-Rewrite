@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
  * <p>An interface for easily implementing gamepads as an input source.</p>
  *
  * @author Jacob Bublitz
- * @see XboxController
+ * @see JackInTheBotXboxController
  * @since 1.0
  */
 public abstract class Controller {
