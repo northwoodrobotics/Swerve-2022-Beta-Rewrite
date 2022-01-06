@@ -13,7 +13,7 @@ import ExternalLib.SpectrumLib.controllers.SpectrumXboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import ExternalLib.JackInTheBotLib.robot.input.Axis;
 import ExternalLib.JackInTheBotLib.robot.input.DPadButton;
-import ExternalLib.JackInTheBotLib.robot.input.XboxController;
+import ExternalLib.JackInTheBotLib.robot.input.JackInTheBotXboxController;
 import frc.robot.commands.DriveCommand;
 import edu.wpi.first.math.trajectory.Trajectory;
 
@@ -25,7 +25,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final XboxController driveController = new XboxController(0);
+  private final JackInTheBotXboxController driveController = new JackInTheBotXboxController(0);
   private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
   private final Superstructure superstructure = new Superstructure();
 
@@ -46,7 +46,7 @@ public class RobotContainer {
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link JackInTheBotXboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    * 
    * 
