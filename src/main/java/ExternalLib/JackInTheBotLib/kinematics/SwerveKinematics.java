@@ -21,12 +21,12 @@ import java.util.Arrays;
  * <a href="https://file.tavsys.net/control/state-space-guide.pdf">Controls Engineering in the FIRST Robotics Competition</a>
  */
 public class SwerveKinematics {
-    private final Vector2[] moduleOffsets;
+    private final NWTranslation2d[] moduleOffsets;
 
     private final SimpleMatrix inverseKinematics;
     private final SimpleMatrix forwardKinematics;
 
-    public SwerveKinematics(Vector2... moduleOffsets) {
+    public SwerveKinematics(NWTranslation2d moduleOffsets) {
         if (moduleOffsets.length < 1) {
             throw new IllegalArgumentException("Must have at least 1 module");
         }

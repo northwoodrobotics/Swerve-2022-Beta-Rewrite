@@ -58,7 +58,7 @@ public class AutonomousChooser {
 
        trajectoryVectorX = trajectory.getInitialState().poseMeters.getX();
        trajectoryVectorY = trajectory.getInitialState().poseMeters.getY();
-       trajectoryVector.plus(trajectoryVectorX, trajectoryVectorY);
+       trajectoryVector.add(trajectoryVectorX, trajectoryVectorY);
 
        
 
