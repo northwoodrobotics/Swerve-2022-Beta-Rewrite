@@ -26,7 +26,7 @@ public class SwerveKinematics {
     private final SimpleMatrix inverseKinematics;
     private final SimpleMatrix forwardKinematics;
 
-    public SwerveKinematics(NWTranslation2d moduleOffsets) {
+    public SwerveKinematics(NWTranslation2d... moduleOffsets) {
         if (moduleOffsets.length < 1) {
             throw new IllegalArgumentException("Must have at least 1 module");
         }
@@ -35,8 +35,8 @@ public class SwerveKinematics {
 
         inverseKinematics = new SimpleMatrix((int) (moduleOffsets.length * 2), 3);
         for (int i = 0; i < moduleOffsets.length; i++) {
-            inverseKinematics.setRow(i * 2 + 0, 0, 1.0, 0.0, -moduleOffsets[i].y);
-            inverseKinematics.setRow(i * 2 + 1, 0, 0.0, 1.0, moduleOffsets[i].x);
+            inverseKinematics.setRow(i * 2 + 0, 0, 1.0, 0.0, -moduleOffsets[i].getX());
+            inverseKinematics.setRow(i * 2 + 1, 0, 0.0, 1.0, moduleOffsets[i].getX());
         }
         forwardKinematics = inverseKinematics.pseudoInverse();
     }
@@ -109,11 +109,11 @@ public class SwerveKinematics {
      *                         normalized velocities.
      * @param maximumVelocity  The absolute maximum velocity that a module can reach.
      */
-    public static void normalizeModuleVelocities(Vector2[] moduleVelocities, double maximumVelocity) {
+    public static void normalizeModuleVelocities(NWTranslation2d[] moduleVelocities, double maximumVelocity) {
         double realMaxVelocity = Arrays.stream(moduleVelocities).mapToDouble(m -> m.length).max().orElseThrow();
         if (realMaxVelocity > maximumVelocity) {
             for (int i = 0; i < moduleVelocities.length; i++) {
-                moduleVelocities[i] = moduleVelocities[i].scale(maximumVelocity / realMaxVelocity);
+                moduleVelocities[i] = (NWTranslation2d) moduleVelocities[i].times(maximumVelocity / realMaxVelocity);
             }
         }
     }

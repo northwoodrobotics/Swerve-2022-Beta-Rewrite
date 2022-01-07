@@ -59,10 +59,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
 
 
     private final SwerveKinematics swerveKinematics = new SwerveKinematics(
-        new Vector2(TRACKWIDTH / 2.0, WHEELBASE / 2.0),         //front left
-        new Vector2(TRACKWIDTH / 2.0, -WHEELBASE / 2.0),        //front right
-        new Vector2(-TRACKWIDTH / 2.0, WHEELBASE / 2.0),       //back left
-        new Vector2(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0)        //back right
+        new NWTranslation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0),         //front left
+        new NWTranslation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0),        //front right
+        new NWTranslation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0),       //back left
+        new NWTranslation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0)        //back right
 );
 private final SwerveDriveKinematics wpi_driveKinematics = new SwerveDriveKinematics(
     new Translation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), //front left
@@ -279,11 +279,11 @@ odometryAngleEntry = tab.add("Angle", 0.0)
                 );
             }
     
-            Vector2[] moduleOutputs = swerveKinematics.toModuleVelocities(chassisVelocity);
+            NWTranslation2d[] moduleOutputs = swerveKinematics.toModuleVelocities(chassisVelocity);
             SwerveKinematics.normalizeModuleVelocities(moduleOutputs, 1);
             for (int i = 0; i < moduleOutputs.length; i++) {
                 var module = modules[i];
-                module.set(moduleOutputs[i].length * 12.0, moduleOutputs[i].getAngle().toRadians());
+                module.set(moduleOutputs[i].length * 12.0, moduleOutputs[i].getAngle().getRadians());
             }
         }
     

@@ -11,8 +11,11 @@ import java.util.Objects;
 
 
 public final class NWTranslation2d extends Translation2d implements Serializable, Interpolable<NWTranslation2d>{
+    public static final long serialVersionUID = 7566662924062254723L;
+
+
     public static final NWTranslation2d ZERO = new NWTranslation2d(0.0, 0.0);
-    double L;
+
 
     public final double m_x;
     public final double m_y;
@@ -30,6 +33,10 @@ public final class NWTranslation2d extends Translation2d implements Serializable
 
     public NWTranslation2d add(double x, double y){
         return new NWTranslation2d(this.m_x+x, this.m_y+y);
+    }
+
+    public NWRotation2d getAngle(){
+        return new NWRotation2d(m_x,m_y);
     }
 
 
@@ -85,6 +92,9 @@ public final class NWTranslation2d extends Translation2d implements Serializable
         DecimalFormat fmt = new DecimalFormat("#0.000");
         return '('+ fmt.format(getX()) + "," + fmt.format(getY())+ ')';
     }
+
+
+
 
 
 

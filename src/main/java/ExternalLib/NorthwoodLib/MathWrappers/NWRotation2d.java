@@ -20,6 +20,10 @@ public class NWRotation2d extends Rotation2d implements Serializable, Interpolab
 
     }
 
+    public NWRotation2d(double x, double y){
+        super(x, y);
+    }
+
 
 
 
