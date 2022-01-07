@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import ExternalLib.NorthwoodLib.MathWrappers.NWPose2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWRotation2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 import ExternalLib.JackInTheBotLib.control.Trajectory;
 import ExternalLib.JackInTheBotLib.math.RigidTransform2;
 import ExternalLib.JackInTheBotLib.math.Rotation2;
@@ -19,7 +22,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 public class AutonomousChooser {
     private final AutonomousTrajectories trajectories;
 
-    Vector2 trajectoryVector; 
+    NWTranslation2d trajectoryVector; 
     double trajectoryVectorX;
     double trajectoryVectorY;
 
@@ -55,7 +58,7 @@ public class AutonomousChooser {
 
        trajectoryVectorX = trajectory.getInitialState().poseMeters.getX();
        trajectoryVectorY = trajectory.getInitialState().poseMeters.getY();
-       trajectoryVector.add(trajectoryVectorX, trajectoryVectorY);
+       trajectoryVector.plus(trajectoryVectorX, trajectoryVectorY);
 
        
 
@@ -66,9 +69,9 @@ public class AutonomousChooser {
 
 
 
-        command.addCommands(new InstantCommand(() -> container.getDrivetrainSubsystem().resetGyroAngle(Rotation2.ZERO)));
+        command.addCommands(new InstantCommand(() -> container.getDrivetrainSubsystem().resetGyroAngle(NWRotation2d.ZERO)));
         command.addCommands(new InstantCommand(() -> container.getDrivetrainSubsystem().resetPose(
-                new RigidTransform2(trajectoryVector, Rotation2.ZERO)
+                new NWPose2d(trajectoryVector, NWRotation2d.ZERO)
                 )));
     }
 
