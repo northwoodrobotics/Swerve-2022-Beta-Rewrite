@@ -76,8 +76,19 @@ public final class NWTranslation2d extends Translation2d implements Serializable
 
 
     public boolean equals(NWTranslation2d other, double allowableError){
-        return MathUtils.
+        return MathUtils.epsilonEquals(getX(), other.getY(), allowableError) &&
+                MathUtils.epsilonEquals(getY(), other.getY(), allowableError);
+
     }
+
+    public String toString(){
+        DecimalFormat fmt = new DecimalFormat("#0.000");
+        return '('+ fmt.format(getX()) + "," + fmt.format(getY())+ ')';
+    }
+
+
+
+    
 
 
 

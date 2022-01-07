@@ -33,7 +33,7 @@ public class SwerveKinematics {
 
         this.moduleOffsets = Arrays.copyOf(moduleOffsets, moduleOffsets.length);
 
-        inverseKinematics = new SimpleMatrix(moduleOffsets.length * 2, 3);
+        inverseKinematics = new SimpleMatrix((int) (moduleOffsets.length * 2), 3);
         for (int i = 0; i < moduleOffsets.length; i++) {
             inverseKinematics.setRow(i * 2 + 0, 0, 1.0, 0.0, -moduleOffsets[i].y);
             inverseKinematics.setRow(i * 2 + 1, 0, 0.0, 1.0, moduleOffsets[i].x);
@@ -49,7 +49,7 @@ public class SwerveKinematics {
      * may be outside the acceptable range of the modules. Use the
      * {@link #normalizeModuleVelocities(Vector2[], double) normalizeModuleVelocities} method to resolve this issue.
      */
-    public Vector2[] toModuleVelocities(ChassisVelocity velocity) {
+    public NWTranslation2d[] toModuleVelocities(ChassisVelocity velocity) {
         SimpleMatrix chassisVelocityVector = new SimpleMatrix(3, 1);
         chassisVelocityVector.setColumn(0, 0,
                 velocity.getTranslationalVelocity().getX(),
@@ -57,10 +57,10 @@ public class SwerveKinematics {
                 velocity.getAngularVelocity());
 
         SimpleMatrix moduleVelocitiesMatrix = inverseKinematics.mult(chassisVelocityVector);
-        Vector2[] moduleVelocities = new Vector2[moduleOffsets.length];
+        NWTranslation2d[] moduleVelocities = new NWTranslation2d[moduleOffsets.length];
 
         for (int i = 0; i < moduleOffsets.length; i++) {
-            moduleVelocities[i] = new Vector2(
+            moduleVelocities[i] = new NWTranslation2d(
                     moduleVelocitiesMatrix.get(i * 2 + 0),
                     moduleVelocitiesMatrix.get(i * 2 + 1)
             );
