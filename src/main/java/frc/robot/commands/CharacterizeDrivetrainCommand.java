@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
@@ -9,6 +10,9 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import ExternalLib.JackInTheBotLib.math.RigidTransform2;
 import ExternalLib.JackInTheBotLib.math.Rotation2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import ExternalLib.NorthwoodLib.MathWrappers.NWPose2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWRotation2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +38,8 @@ public class CharacterizeDrivetrainCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        drivetrain.resetGyroAngle(Rotation2.ZERO);
-        drivetrain.resetPose(RigidTransform2.ZERO);
+        drivetrain.resetGyroAngle(NWRotation2d.ZERO);
+        drivetrain.resetPose(NWPose2d.ZERO);
 
         NetworkTableInstance.getDefault().setUpdateRate(10.0e-3);
     }
@@ -43,8 +47,8 @@ public class CharacterizeDrivetrainCommand extends CommandBase {
     @Override
     public void execute() {
         double now = Timer.getFPGATimestamp();
-        double position = drivetrain.getPose().translation.x;
-        double velocity = drivetrain.getVelocity().x;
+        double position = drivetrain.getPose().getTranslation().getX();
+        double velocity = drivetrain.getVelocity().getX();
 
         double battery = RobotController.getBatteryVoltage();
         double motorVoltage = battery * Math.abs(priorAutospeed);
@@ -52,7 +56,7 @@ public class CharacterizeDrivetrainCommand extends CommandBase {
         double autospeed = autoSpeedEntry.getDouble(0.0);
         priorAutospeed = autospeed;
 
-        drivetrain.drive(new Vector2(autospeed, 0.0), 0.0, false);
+        drivetrain.drive(new Translation2d(autospeed, 0.0), 0.0, false);
 
         telemetryData.add(now);
         telemetryData.add(autospeed * RobotController.getInputVoltage());
@@ -72,6 +76,6 @@ public class CharacterizeDrivetrainCommand extends CommandBase {
 
         telemetryEntry.setString(b.toString());
 
-        drivetrain.drive(Vector2.ZERO, 0.0, false);
+        drivetrain.drive(NWTranslation2d.ZERO, 0.0, false);
     }
 }

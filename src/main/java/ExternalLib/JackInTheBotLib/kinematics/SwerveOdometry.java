@@ -3,6 +3,12 @@ package ExternalLib.JackInTheBotLib.kinematics;
 import ExternalLib.JackInTheBotLib.math.RigidTransform2;
 import ExternalLib.JackInTheBotLib.math.Rotation2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import ExternalLib.NorthwoodLib.MathWrappers.*;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import ExternalLib.NorthwoodLib.MathWrappers.*;
+
 
 /**
  * Helper class for swerve drive odometry.
@@ -11,13 +17,13 @@ import ExternalLib.JackInTheBotLib.math.Vector2;
  */
 public class SwerveOdometry {
     private final SwerveKinematics kinematics;
-    private RigidTransform2 pose;
+    private NWPose2d pose;
 
     public SwerveOdometry(SwerveKinematics kinematics) {
-        this(kinematics, RigidTransform2.ZERO);
+        this(kinematics, NWPose2d.ZERO);
     }
 
-    public SwerveOdometry(SwerveKinematics kinematics, RigidTransform2 initialPose) {
+    public SwerveOdometry(SwerveKinematics kinematics, NWPose2d initialPose) {
         this.kinematics = kinematics;
         this.pose = initialPose;
     }
@@ -27,7 +33,7 @@ public class SwerveOdometry {
      *
      * @param pose The robot's new pose.
      */
-    public void resetPose(RigidTransform2 pose) {
+    public void resetPose(NWPose2d pose) {
         this.pose = pose;
     }
 
@@ -37,8 +43,8 @@ public class SwerveOdometry {
      * @param position The new position of the robot.
      * @param rotation The new rotation of the robot.
      */
-    public void resetPose(Vector2 position, Rotation2 rotation) {
-        resetPose(new RigidTransform2(position, rotation));
+    public void resetPose(NWTranslation2d position, NWRotation2d rotation) {
+        resetPose(new NWPose2d(position, rotation));
     }
 
     /**
@@ -46,8 +52,8 @@ public class SwerveOdometry {
      *
      * @param position The robot's new position.
      */
-    public void resetPosition(Vector2 position) {
-        resetPose(position, getPose().rotation);
+    public void resetPosition(NWTranslation2d position) {
+        resetPose(position, (NWRotation2d) getPose().getRotation());
     }
 
     /**
@@ -57,8 +63,8 @@ public class SwerveOdometry {
      *
      * @param rotation The robot's new rotation.
      */
-    public void resetRotation(Rotation2 rotation) {
-        resetPose(getPose().translation, rotation);
+    public void resetRotation(NWRotation2d rotation) {
+        resetPose((NWTranslation2d) getPose().getTranslation(), rotation);
     }
 
     /**
@@ -66,7 +72,7 @@ public class SwerveOdometry {
      *
      * @return The pose of the robot.
      */
-    public RigidTransform2 getPose() {
+    public NWPose2d getPose() {
         return pose;
     }
 
@@ -79,17 +85,17 @@ public class SwerveOdometry {
      *                         {@link SwerveKinematics} was given when it was instantiated.
      * @return The new pose of the robot.
      */
-    public RigidTransform2 update(Rotation2 gyroAngle, double dt, Vector2... moduleVelocities) {
+    public Pose2d update(NWRotation2d gyroAngle, double dt, Vector2... moduleVelocities) {
         ChassisVelocity velocity = kinematics.toChassisVelocity(moduleVelocities);
 
         // Calculate the field-oriented translational velocity of the robot
-        Vector2 fieldOrientedVelocity = velocity.getTranslationalVelocity().rotateBy(gyroAngle);
+        NWTranslation2d fieldOrientedVelocity = (NWTranslation2d) velocity.getTranslationalVelocity().rotateBy(gyroAngle);
 
         // Integrate using dt to determine our new position
-        Vector2 newPosition = pose.translation
-                .add(fieldOrientedVelocity.scale(dt));
+        NWTranslation2d newPosition = (NWTranslation2d) pose.getTranslation()
+                .plus(fieldOrientedVelocity.times(dt));
 
-        pose = new RigidTransform2(newPosition, gyroAngle);
+        pose = new NWPose2d(newPosition, gyroAngle);
 
         return pose;
     }

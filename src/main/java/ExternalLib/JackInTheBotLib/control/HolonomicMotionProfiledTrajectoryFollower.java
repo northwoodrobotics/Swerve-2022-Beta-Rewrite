@@ -4,7 +4,9 @@ import ExternalLib.JackInTheBotLib.math.RigidTransform2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
 import ExternalLib.JackInTheBotLib.util.HolonomicDriveSignal;
 import ExternalLib.JackInTheBotLib.util.HolonomicFeedforward;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 import edu.wpi.first.math.geometry.Pose2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWPose2d;
 
 public class HolonomicMotionProfiledTrajectoryFollower extends TrajectoryFollower<HolonomicDriveSignal> {
     private PidController forwardController;
@@ -29,12 +31,12 @@ public class HolonomicMotionProfiledTrajectoryFollower extends TrajectoryFollowe
     }
 
     @Override
-    protected HolonomicDriveSignal calculateDriveSignal(Pose2d currentPose, Vector2 velocity,
+    protected HolonomicDriveSignal calculateDriveSignal(NWPose2d currentPose, NWTranslation2d velocity,
                                                double rotationalVelocity, Trajectory trajectory, double time,
                                                double dt) {
         if (time > trajectory.getDuration()) {
             finished = true;
-            return new HolonomicDriveSignal(Vector2.ZERO, 0.0, false);
+            return new HolonomicDriveSignal(NWTranslation2d.ZERO, 0.0, false);
         }
 
         lastState = trajectory.calculate(time);
@@ -49,7 +51,7 @@ public class HolonomicMotionProfiledTrajectoryFollower extends TrajectoryFollowe
         rotationController.setSetpoint(lastState.getPathState().getRotation().toRadians());
 
         return new HolonomicDriveSignal(
-                new Vector2(
+                new NWTranslation2d(
                         forwardController.calculate(currentPose.getX(), dt) + feedforwardVector.x,
                         strafeController.calculate(currentPose.getY(), dt) + feedforwardVector.y
                 ),

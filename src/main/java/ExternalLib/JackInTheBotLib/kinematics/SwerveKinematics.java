@@ -2,6 +2,7 @@ package ExternalLib.JackInTheBotLib.kinematics;
 
 import org.ejml.simple.SimpleMatrix;
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 
 import java.util.Arrays;
 
@@ -51,8 +52,8 @@ public class SwerveKinematics {
     public Vector2[] toModuleVelocities(ChassisVelocity velocity) {
         SimpleMatrix chassisVelocityVector = new SimpleMatrix(3, 1);
         chassisVelocityVector.setColumn(0, 0,
-                velocity.getTranslationalVelocity().x,
-                velocity.getTranslationalVelocity().y,
+                velocity.getTranslationalVelocity().getX(),
+                velocity.getTranslationalVelocity().getY(),
                 velocity.getAngularVelocity());
 
         SimpleMatrix moduleVelocitiesMatrix = inverseKinematics.mult(chassisVelocityVector);
@@ -89,7 +90,7 @@ public class SwerveKinematics {
 
         SimpleMatrix chassisVelocityVector = forwardKinematics.mult(moduleVelocitiesMatrix);
         return new ChassisVelocity(
-                new Vector2(
+                new NWTranslation2d(
                         chassisVelocityVector.get(0),
                         chassisVelocityVector.get(1)
                 ),

@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -30,6 +32,8 @@ import ExternalLib.JackInTheBotLib.math.Rotation2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
 import ExternalLib.JackInTheBotLib.robot.UpdateManager;
 import ExternalLib.JackInTheBotLib.util.*;
+
+import ExternalLib.NorthwoodLib.MathWrappers.*;
 import java.util.Optional;
 
 
@@ -79,13 +83,13 @@ private final Object sensorLock = new Object();
     private final AHRS gyroscope = new AHRS(SPI.Port.kMXP);
     private final Object kinematicsLock = new Object();
     @GuardedBy("kinematicsLock")
-    private final SwerveOdometry swerveOdometry = new SwerveOdometry(swerveKinematics, RigidTransform2.ZERO);
+    private final SwerveOdometry swerveOdometry = new SwerveOdometry(swerveKinematics, NWPose2d.ZERO);
     @GuardedBy("kinematicsLock")
-    private Pose2d pose = RigidTransform2.ZERO;
+    private NWPose2d pose = NWPose2d.ZERO;
     @GuardedBy("kinematicsLock")
-    private final InterpolatingTreeMap<InterpolatingDouble, RigidTransform2> latencyCompensationMap = new InterpolatingTreeMap<>();
+    private final InterpolatingTreeMap<InterpolatingDouble, NWPose2d> latencyCompensationMap = new InterpolatingTreeMap<>();
     @GuardedBy("kinematicsLock")
-    private Vector2 velocity = Vector2.ZERO;
+    private NWTranslation2d velocity = NWTranslation2d.ZERO;
     @GuardedBy("kinematicsLock")
     private double angularVelocity = 0.0;
 
@@ -184,13 +188,13 @@ odometryAngleEntry = tab.add("Angle", 0.0)
     
 
     
-    public Pose2d getPose() {
+    public NWPose2d getPose() {
         synchronized (kinematicsLock) {
             return pose;
         }
     }
 
-    public Vector2 getVelocity() {
+    public NWTranslation2d getVelocity() {
         synchronized (kinematicsLock) {
             return velocity;
         }
@@ -203,20 +207,20 @@ odometryAngleEntry = tab.add("Angle", 0.0)
     }
 
     
-    public void drive(Vector2 translationalVelocity, double rotationalVelocity, boolean isFieldOriented) {
+    public void drive(Translation2d translationalVelocity, double rotationalVelocity, boolean isFieldOriented) {
         synchronized (stateLock) {
             driveSignal = new HolonomicDriveSignal(translationalVelocity, rotationalVelocity, isFieldOriented);
         }
     }
 
-        public void resetPose(RigidTransform2 pose) {
+        public void resetPose(NWPose2d pose) {
             synchronized (kinematicsLock) {
                 this.pose = pose;
                 swerveOdometry.resetPose(pose);
             }
         }
     
-        public void resetGyroAngle(Rotation2 angle) {
+        public void resetGyroAngle(Rotation2d angle) {
             synchronized (sensorLock) {
                 gyroscope.reset();
 
@@ -238,10 +242,10 @@ odometryAngleEntry = tab.add("Angle", 0.0)
                 moduleVelocities[i] = Vector2.fromAngle(Rotation2.fromRadians(module.getSteerAngle())).scale(module.getDriveVelocity() * 39.37008);
             }
     
-            Rotation2 angle;
+            Rotation2d angle;
             double angularVelocity;
             synchronized (sensorLock) {
-                angle = Rotation2.fromDegrees(gyroscope.getAngle());
+                angle = NWRotation2d.fromDegrees(gyroscope.getAngle());
                 angularVelocity = gyroscope.getRate();
             }
     
@@ -249,12 +253,12 @@ odometryAngleEntry = tab.add("Angle", 0.0)
     
             synchronized (kinematicsLock) {
     
-                this.pose = swerveOdometry.update(angle, dt, moduleVelocities);
+                this.pose = (NWPose2d) swerveOdometry.update((NWRotation2d) angle, dt, moduleVelocities);
                 if (latencyCompensationMap.size() > MAX_LATENCY_COMPENSATION_MAP_ENTRIES) {
                     latencyCompensationMap.remove(latencyCompensationMap.firstKey());
                 }
                 latencyCompensationMap.put(new InterpolatingDouble(time), pose);
-                this.velocity = velocity.getTranslationalVelocity();
+                this.velocity = (NWTranslation2d) velocity.getTranslationalVelocity();
                 this.angularVelocity = angularVelocity;
             }
         }
@@ -262,15 +266,15 @@ odometryAngleEntry = tab.add("Angle", 0.0)
         private void updateModules(HolonomicDriveSignal driveSignal, double dt) {
             ChassisVelocity chassisVelocity;
             if (driveSignal == null) {
-                chassisVelocity = new ChassisVelocity(Vector2.ZERO, 0.0);
+                chassisVelocity = new ChassisVelocity(NWTranslation2d.ZERO, 0.0);
             } else if (driveSignal.isFieldOriented()) {
                 chassisVelocity = new ChassisVelocity(
-                        driveSignal.getTranslation().rotateBy(getPose().rotation.inverse()),
+                        (NWTranslation2d) driveSignal.getTranslation().rotateBy(getPose().getRotation()),
                         driveSignal.getRotation()
                 );
             } else {
                 chassisVelocity = new ChassisVelocity(
-                        driveSignal.getTranslation(),
+                        (NWTranslation2d) driveSignal.getTranslation(),
                         driveSignal.getRotation()
                 );
             }
@@ -283,10 +287,10 @@ odometryAngleEntry = tab.add("Angle", 0.0)
             }
         }
     
-        public RigidTransform2 getPoseAtTime(double timestamp) {
+        public Pose2d getPoseAtTime(double timestamp) {
             synchronized (kinematicsLock) {
                 if (latencyCompensationMap.isEmpty()) {
-                    return RigidTransform2.ZERO;
+                    return NWPose2d.ZERO;
                 }
                 return latencyCompensationMap.getInterpolated(new InterpolatingDouble(timestamp));
             }
@@ -307,7 +311,7 @@ odometryAngleEntry = tab.add("Angle", 0.0)
             if (trajectorySignal.isPresent()) {
                 driveSignal = trajectorySignal.get();
                 driveSignal = new HolonomicDriveSignal(
-                        driveSignal.getTranslation().scale(1.0 / RobotController.getBatteryVoltage()),
+                        driveSignal.getTranslation().times(1.0 / RobotController.getBatteryVoltage()),
                         driveSignal.getRotation() / RobotController.getBatteryVoltage(),
                         driveSignal.isFieldOriented()
                 );
@@ -322,10 +326,10 @@ odometryAngleEntry = tab.add("Angle", 0.0)
     
         @Override
         public void periodic() {
-            RigidTransform2 pose = getPose();
-            odometryXEntry.setDouble(pose.translation.x);
-            odometryYEntry.setDouble(pose.translation.y);
-            odometryAngleEntry.setDouble(getPose().rotation.toDegrees());
+            NWPose2d pose = getPose();
+            odometryXEntry.setDouble(pose.getX());
+            odometryYEntry.setDouble(pose.getY());
+            odometryAngleEntry.setDouble(getPose().getRotation().getDegrees());
         }
     
         public HolonomicMotionProfiledTrajectoryFollower getFollower() {

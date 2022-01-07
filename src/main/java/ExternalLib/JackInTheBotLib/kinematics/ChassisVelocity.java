@@ -1,6 +1,8 @@
 package ExternalLib.JackInTheBotLib.kinematics;
 
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import edu.wpi.first.math.geometry.Translation2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 
 /**
  * Represents the velocity of a robot chassis w.r.t. the robot frame of reference.
@@ -9,10 +11,10 @@ import ExternalLib.JackInTheBotLib.math.Vector2;
  * they cannot move sideways.
  */
 public class ChassisVelocity {
-    private final Vector2 translationalVelocity;
+    private final NWTranslation2d translationalVelocity;
     private final double angularVelocity;
 
-    public ChassisVelocity(Vector2 translationalVelocity, double angularVelocity) {
+    public ChassisVelocity(NWTranslation2d translationalVelocity, double angularVelocity) {
         this.translationalVelocity = translationalVelocity;
         this.angularVelocity = angularVelocity;
     }
@@ -25,7 +27,7 @@ public class ChassisVelocity {
      *
      * @return The translational velocity w.r.t. the robot.
      */
-    public Vector2 getTranslationalVelocity() {
+    public NWTranslation2d getTranslationalVelocity() {
         return translationalVelocity;
     }
 
