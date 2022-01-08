@@ -19,6 +19,7 @@ public abstract class TrajectoryFollower<DriveSignalType> {
      * Protected by {@link #trajectoryLock}
      */
     private PathPlannerTrajectory currentTrajectory = null;
+    private Trajectory currentTrajectory2 = null;
 
     /**
      * The time that the current trajectory started to be followed. NaN if the trajectory has not been started yet.
@@ -69,6 +70,12 @@ public abstract class TrajectoryFollower<DriveSignalType> {
             startTime = Double.NaN;
         }
     }
+    public final void follow2(Trajectory trajectory2) {
+        synchronized (trajectoryLock) {
+            currentTrajectory2 = trajectory2;
+            startTime = Double.NaN;
+        }
+    }
 
     /**
      * Gets the current trajectory that is being followed if any.
@@ -80,6 +87,12 @@ public abstract class TrajectoryFollower<DriveSignalType> {
             return Optional.ofNullable(currentTrajectory);
         }
     }
+    public final Optional<Trajectory> getCurrentTrajectory2() {
+        synchronized (trajectoryLock) {
+            return Optional.ofNullable(currentTrajectory2);
+        }
+    }
+
 
     /**
      * Updates the follower and returns the calculated drive signal that should be applied to the robot in order to

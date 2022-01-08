@@ -48,6 +48,19 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         0.0032181,
         0.30764
         );
+
+    public static final TrajectoryConstraint[] TRAJECTORY_CONSTRAINTS = {
+            new FeedforwardConstraint(11.0, FEEDFORWARD_CONSTANTS.getVelocityConstant(), FEEDFORWARD_CONSTANTS.getAccelerationConstant(), false),
+            new MaxAccelerationConstraint(12.5 * 12.0),
+            new CentripetalAccelerationConstraint(15 * 12.0)
+    };
+
+  
+
+    
+
+
+   
         
     private static final int MAX_LATENCY_COMPENSATION_MAP_ENTRIES = 25;
     private final HolonomicMotionProfiledTrajectoryFollower follower = new HolonomicMotionProfiledTrajectoryFollower(

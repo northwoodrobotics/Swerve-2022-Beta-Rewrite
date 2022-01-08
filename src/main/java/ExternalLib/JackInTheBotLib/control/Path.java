@@ -4,20 +4,24 @@ import ExternalLib.JackInTheBotLib.math.Rotation2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
 import ExternalLib.JackInTheBotLib.util.InterpolatingDouble;
 import ExternalLib.JackInTheBotLib.util.InterpolatingTreeMap;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWRotation2d;
+
+
 
 import java.util.Map;
 
 public class Path {
     private final PathSegment[] segments;
-    private final InterpolatingTreeMap<InterpolatingDouble, Rotation2> rotationMap = new InterpolatingTreeMap<>();
+    private final InterpolatingTreeMap<InterpolatingDouble, NWRotation2d> rotationMap = new InterpolatingTreeMap<>();
     private final double[] distancesFromStart;
 
     private final double length;
 
-    public Path(PathSegment[] segments, Map<Double, Rotation2> rotationMap) {
+    public Path(PathSegment[] segments, Map<Double, NWRotation2d> rotationMap) {
         this.segments = segments;
 
-        for (Map.Entry<Double, Rotation2> rotationEntry : rotationMap.entrySet()) {
+        for (Map.Entry<Double, NWRotation2d> rotationEntry : rotationMap.entrySet()) {
             this.rotationMap.put(new InterpolatingDouble(rotationEntry.getKey()), rotationEntry.getValue());
         }
 
@@ -82,18 +86,18 @@ public class Path {
         return segments;
     }
 
-    public InterpolatingTreeMap<InterpolatingDouble, Rotation2> getRotationMap() {
+    public InterpolatingTreeMap<InterpolatingDouble, NWRotation2d> getRotationMap() {
         return rotationMap;
     }
 
     public static class State {
         private final double distance;
-        private final Vector2 position;
-        private final Rotation2 heading;
-        private final Rotation2 rotation;
+        private final NWTranslation2d position;
+        private final NWRotation2d heading;
+        private final NWRotation2d rotation;
         private final double curvature;
 
-        public State(double distance, Vector2 position, Rotation2 heading, Rotation2 rotation, double curvature) {
+        public State(double distance, NWTranslation2d position, NWRotation2d heading, NWRotation2d rotation, double curvature) {
             this.distance = distance;
             this.position = position;
             this.heading = heading;
@@ -105,15 +109,15 @@ public class Path {
             return distance;
         }
 
-        public Vector2 getPosition() {
+        public NWTranslation2d getPosition() {
             return position;
         }
 
-        public Rotation2 getHeading() {
+        public NWRotation2d getHeading() {
             return heading;
         }
 
-        public Rotation2 getRotation() {
+        public NWRotation2d getRotation() {
             return rotation;
         }
 

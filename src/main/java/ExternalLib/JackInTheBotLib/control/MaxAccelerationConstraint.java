@@ -25,4 +25,6 @@ public class MaxAccelerationConstraint extends TrajectoryConstraint {
     public double getMaxDeceleration(Path.State state, double velocity) {
         return maxDeceleration;
     }
+
+    
 }

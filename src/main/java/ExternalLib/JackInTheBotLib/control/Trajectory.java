@@ -2,6 +2,8 @@ package ExternalLib.JackInTheBotLib.control;
 
 import ExternalLib.JackInTheBotLib.math.MathUtils;
 
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+
 import java.util.ArrayList;
 import java.util.List;
 

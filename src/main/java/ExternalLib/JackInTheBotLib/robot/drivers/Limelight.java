@@ -6,6 +6,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import ExternalLib.JackInTheBotLib.math.MathUtils;
 import ExternalLib.JackInTheBotLib.math.Vector2;
 
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
+
 public final class Limelight {
     private final NetworkTable table;
 
@@ -85,8 +87,8 @@ public final class Limelight {
      * Gets the position of the target in radians within the image.
      * @returns The position of the target.
      */
-    public Vector2 getTargetPosition() {
-        return new Vector2(Math.toRadians(tx.getDouble(0)), Math.toRadians(ty.getDouble(0)));
+    public NWTranslation2d getTargetPosition() {
+        return new NWTranslation2d(Math.toRadians(tx.getDouble(0)), Math.toRadians(ty.getDouble(0)));
     }
 
     /**
