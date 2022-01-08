@@ -75,7 +75,7 @@ public class SwerveKinematics {
      * @param moduleVelocities The velocities of the modules w.r.t the robot.
      * @return The chassis velocity that would result from the module velocities.
      */
-    public ChassisVelocity toChassisVelocity(Vector2... moduleVelocities) {
+    public ChassisVelocity toChassisVelocity(NWTranslation2d... moduleVelocities) {
         if (moduleVelocities.length != moduleOffsets.length) {
             throw new IllegalArgumentException("Amount of module velocities given does not match the amount of modules specified in the constructor");
         }
@@ -83,8 +83,8 @@ public class SwerveKinematics {
         SimpleMatrix moduleVelocitiesMatrix = new SimpleMatrix(moduleOffsets.length * 2, 1);
         for (int i = 0; i < moduleOffsets.length; i++) {
             moduleVelocitiesMatrix.setColumn(0, i * 2,
-                    moduleVelocities[i].x,
-                    moduleVelocities[i].y
+                    moduleVelocities[i].getX(),
+                    moduleVelocities[i].getY()
             );
         }
 

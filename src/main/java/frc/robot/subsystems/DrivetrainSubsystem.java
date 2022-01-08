@@ -29,7 +29,7 @@ import ExternalLib.JackInTheBotLib.kinematics.SwerveKinematics;
 import ExternalLib.JackInTheBotLib.kinematics.SwerveOdometry;
 import ExternalLib.JackInTheBotLib.math.RigidTransform2;
 import ExternalLib.JackInTheBotLib.math.Rotation2;
-import ExternalLib.JackInTheBotLib.math.Vector2;
+
 import ExternalLib.JackInTheBotLib.robot.UpdateManager;
 import ExternalLib.JackInTheBotLib.util.*;
 
@@ -235,11 +235,11 @@ odometryAngleEntry = tab.add("Angle", 0.0)
         }
     
         private void updateOdometry(double time, double dt) {
-            Vector2[] moduleVelocities = new Vector2[modules.length];
+            NWTranslation2d[] moduleVelocities = new NWTranslation2d[modules.length];
             for (int i = 0; i < modules.length; i++) {
                 var module = modules[i];
     
-                moduleVelocities[i] = Vector2.fromAngle(Rotation2.fromRadians(module.getSteerAngle())).scale(module.getDriveVelocity() * 39.37008);
+                moduleVelocities[i] = (NWTranslation2d) NWTranslation2d.fromAngle((NWRotation2d) Rotation2d.fromDegrees(module.getSteerAngle())).times(module.getDriveVelocity() * 39.37008);
             }
     
             Rotation2d angle;

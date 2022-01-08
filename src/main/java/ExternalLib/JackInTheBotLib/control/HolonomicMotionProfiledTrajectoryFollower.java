@@ -7,6 +7,12 @@ import ExternalLib.JackInTheBotLib.util.HolonomicFeedforward;
 import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import ExternalLib.NorthwoodLib.MathWrappers.NWPose2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWRotation2d;
+
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+import com.pathplanner.lib.PathPlanner;
+
 
 public class HolonomicMotionProfiledTrajectoryFollower extends TrajectoryFollower<HolonomicDriveSignal> {
     private PidController forwardController;
@@ -15,7 +21,7 @@ public class HolonomicMotionProfiledTrajectoryFollower extends TrajectoryFollowe
 
     private HolonomicFeedforward feedforward;
 
-    private Trajectory.State lastState = null;
+    private PathPlannerState lastState = null;
 
     private boolean finished = false;
 
@@ -32,35 +38,35 @@ public class HolonomicMotionProfiledTrajectoryFollower extends TrajectoryFollowe
 
     @Override
     protected HolonomicDriveSignal calculateDriveSignal(NWPose2d currentPose, NWTranslation2d velocity,
-                                               double rotationalVelocity, Trajectory trajectory, double time,
+                                               double rotationalVelocity, PathPlannerTrajectory trajectory, double time,
                                                double dt) {
-        if (time > trajectory.getDuration()) {
+        if (time > trajectory.getTotalTimeSeconds()) {
             finished = true;
             return new HolonomicDriveSignal(NWTranslation2d.ZERO, 0.0, false);
         }
 
-        lastState = trajectory.calculate(time);
+        lastState = trajectory.getState((int) time);
 
-        Vector2 segmentVelocity = Vector2.fromAngle(lastState.getPathState().getHeading()).scale(lastState.getVelocity());
-        Vector2 segmentAcceleration = Vector2.fromAngle(lastState.getPathState().getHeading()).scale(lastState.getAcceleration());
+        NWTranslation2d segmentVelocity = (NWTranslation2d) NWTranslation2d.fromAngle((NWRotation2d) lastState.poseMeters.getRotation()).times(lastState.velocityMetersPerSecond);
+        NWTranslation2d segmentAcceleration = (NWTranslation2d) NWTranslation2d.fromAngle((NWRotation2d) lastState.poseMeters.getRotation()).times(lastState.accelerationMetersPerSecondSq);
 
-        Vector2 feedforwardVector = feedforward.calculateFeedforward(segmentVelocity, segmentAcceleration);
+        NWTranslation2d feedforwardVector = feedforward.calculateFeedforward(segmentVelocity, segmentAcceleration);
 
-        forwardController.setSetpoint(lastState.getPathState().getPosition().x);
-        strafeController.setSetpoint(lastState.getPathState().getPosition().y);
-        rotationController.setSetpoint(lastState.getPathState().getRotation().toRadians());
+        forwardController.setSetpoint(lastState.poseMeters.getX());
+        strafeController.setSetpoint(lastState.poseMeters.getY());
+        rotationController.setSetpoint(lastState.poseMeters.getRotation().getRadians());
 
         return new HolonomicDriveSignal(
                 new NWTranslation2d(
-                        forwardController.calculate(currentPose.getX(), dt) + feedforwardVector.x,
-                        strafeController.calculate(currentPose.getY(), dt) + feedforwardVector.y
+                        forwardController.calculate(currentPose.getX(), dt) + feedforwardVector.getX(),
+                        strafeController.calculate(currentPose.getY(), dt) + feedforwardVector.getY()
                 ),
                 rotationController.calculate(currentPose.getRotation().getRadians(), dt),
                 true
         );
     }
 
-    public Trajectory.State getLastState() {
+    public PathPlannerState getLastState() {
         return lastState;
     }
 

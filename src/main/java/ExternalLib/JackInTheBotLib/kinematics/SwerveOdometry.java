@@ -85,7 +85,7 @@ public class SwerveOdometry {
      *                         {@link SwerveKinematics} was given when it was instantiated.
      * @return The new pose of the robot.
      */
-    public Pose2d update(NWRotation2d gyroAngle, double dt, Vector2... moduleVelocities) {
+    public Pose2d update(NWRotation2d gyroAngle, double dt, NWTranslation2d... moduleVelocities) {
         ChassisVelocity velocity = kinematics.toChassisVelocity(moduleVelocities);
 
         // Calculate the field-oriented translational velocity of the robot

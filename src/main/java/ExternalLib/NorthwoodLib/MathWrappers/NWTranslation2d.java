@@ -39,6 +39,16 @@ public final class NWTranslation2d extends Translation2d implements Serializable
         return new NWRotation2d(m_x,m_y);
     }
 
+    public static NWTranslation2d fromAngle(NWRotation2d rotation){
+        return new NWTranslation2d(rotation.getCos(), rotation.getSin());
+    }
+
+    public NWTranslation2d normal(){
+        return new NWTranslation2d(m_x/length, m_y/length);
+    }
+
+
+
 
 
 

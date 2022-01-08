@@ -1,6 +1,7 @@
 package ExternalLib.JackInTheBotLib.util;
 
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 
 public class HolonomicFeedforward {
     private final DrivetrainFeedforwardConstants forwardConstants;
@@ -16,27 +17,27 @@ public class HolonomicFeedforward {
         this(translationConstants, translationConstants);
     }
 
-    public Vector2 calculateFeedforward(Vector2 velocity, Vector2 acceleration) {
+    public NWTranslation2d calculateFeedforward(NWTranslation2d velocity, NWTranslation2d acceleration) {
         // We don't use `DrivetrainFeedforwardConstants.calculateFeedforward` because we want to apply kS (the static
         // constant) proportionally based on the rest of the feedforwards.
 
-        double forwardFeedforward = forwardConstants.getVelocityConstant() * velocity.x;
-        forwardFeedforward += forwardConstants.getAccelerationConstant() * acceleration.x;
+        double forwardFeedforward = forwardConstants.getVelocityConstant() * velocity.getX();
+        forwardFeedforward += forwardConstants.getAccelerationConstant() * acceleration.getX();
 
-        double strafeFeedforward = strafeConstants.getVelocityConstant() * velocity.y;
-        strafeFeedforward += strafeConstants.getAccelerationConstant() * acceleration.y;
+        double strafeFeedforward = strafeConstants.getVelocityConstant() * velocity.getY();
+        strafeFeedforward += strafeConstants.getAccelerationConstant() * acceleration.getY();
 
-        Vector2 feedforwardVector = new Vector2(forwardFeedforward, strafeFeedforward);
+       NWTranslation2d feedforwardVector = new NWTranslation2d(forwardFeedforward, strafeFeedforward);
 
         // Apply the kS constant proportionally to the forward and strafe feedforwards based on their relative
         // magnitudes
-        Vector2 feedforwardUnitVector = feedforwardVector.normal();
-        forwardFeedforward += Math.copySign(feedforwardUnitVector.x * forwardConstants.getStaticConstant(),
+        NWTranslation2d feedforwardUnitVector = feedforwardVector.normal();
+        forwardFeedforward += Math.copySign(feedforwardUnitVector.getX() * forwardConstants.getStaticConstant(),
                 forwardFeedforward);
-        strafeFeedforward += Math.copySign(feedforwardUnitVector.y * strafeConstants.getStaticConstant(),
+        strafeFeedforward += Math.copySign(feedforwardUnitVector.getY() * strafeConstants.getStaticConstant(),
                 strafeFeedforward);
 
-        return new Vector2(forwardFeedforward, strafeFeedforward);
+        return new NWTranslation2d(forwardFeedforward, strafeFeedforward);
     }
 
     public DrivetrainFeedforwardConstants getForwardConstants() {
