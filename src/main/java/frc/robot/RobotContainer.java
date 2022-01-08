@@ -16,6 +16,7 @@ import ExternalLib.JackInTheBotLib.robot.input.DPadButton;
 import ExternalLib.JackInTheBotLib.robot.input.JackInTheBotXboxController;
 import frc.robot.commands.DriveCommand;
 import edu.wpi.first.math.trajectory.Trajectory;
+import frc.robot.subsystems.VisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -28,6 +29,7 @@ public class RobotContainer {
   private final JackInTheBotXboxController driveController = new JackInTheBotXboxController(0);
   private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
   private final Superstructure superstructure = new Superstructure();
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrainSubsystem);
 
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
@@ -52,7 +54,9 @@ public class RobotContainer {
    * 
    */
 
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+  }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

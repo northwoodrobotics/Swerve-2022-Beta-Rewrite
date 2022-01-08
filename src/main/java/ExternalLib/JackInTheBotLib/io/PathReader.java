@@ -11,6 +11,7 @@ import ExternalLib.JackInTheBotLib.io.json.Rotation2JsonHandler;
 import ExternalLib.JackInTheBotLib.io.json.SimpleMatrixJsonHandler;
 import ExternalLib.JackInTheBotLib.math.Rotation2;
 import ExternalLib.JackInTheBotLib.util.InterpolatingDouble;
+import ExternalLib.NorthwoodLib.MathWrappers.NWRotation2d;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -48,7 +49,7 @@ public final class PathReader implements AutoCloseable {
 
             Type rotationMapType = new TypeToken<TreeMap<Double, Rotation2>>() {
             }.getType();
-            Map<Double, Rotation2> rotations = gson.fromJson(root.get("rotations"), rotationMapType);
+            Map<Double, NWRotation2d> rotations = gson.fromJson(root.get("rotations"), rotationMapType);
 
             return new Path(pathSegments, rotations);
         } catch (JsonIOException | JsonSyntaxException e) {

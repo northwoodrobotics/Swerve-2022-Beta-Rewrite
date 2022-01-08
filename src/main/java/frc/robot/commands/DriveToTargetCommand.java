@@ -24,7 +24,7 @@ public class DriveToTargetCommand extends CommandBase {
 
     private boolean shouldRegeneratePaths = true;
 
-    public DriveToLoadingStationCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision,
+    public DriveToTargetCommand(DrivetrainSubsystem drivetrain, VisionSubsystem vision,
                                         Supplier<Side> loadingStationSide) {
         this.drivetrain = drivetrain;
         this.vision = vision;
@@ -69,9 +69,9 @@ public class DriveToTargetCommand extends CommandBase {
                 .build();
 
         double startingVelocity = drivetrain.getVelocity().length;
-        Path.State lastState = drivetrain.getFollower().getLastState();
+        Trajectory.State lastState = drivetrain.getFollower().getLastState2();
         if (lastState != null) {
-            startingVelocity = lastState.velocityMetersPerSecond;
+            startingVelocity = lastState.getVelocity();
         }
 
         Trajectory trajectory = new Trajectory(path, DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS, 12.0, startingVelocity, 0.0);

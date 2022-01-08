@@ -30,6 +30,10 @@ public final class NWTranslation2d extends Translation2d implements Serializable
 
     }
 
+    public double getLength(){
+        return length;
+    }
+
 
     public NWTranslation2d add(double x, double y){
         return new NWTranslation2d(this.m_x+x, this.m_y+y);
@@ -46,6 +50,14 @@ public final class NWTranslation2d extends Translation2d implements Serializable
     public NWTranslation2d normal(){
         return new NWTranslation2d(m_x/length, m_y/length);
     }
+
+    public double cross(NWTranslation2d other){
+        return m_x*other.m_y-m_y*other.m_x;
+    }
+	public double dot(NWTranslation2d other) {
+		return m_x * other.m_x + m_y * other.m_y;
+	}
+
 
 
 
@@ -102,6 +114,16 @@ public final class NWTranslation2d extends Translation2d implements Serializable
         DecimalFormat fmt = new DecimalFormat("#0.000");
         return '('+ fmt.format(getX()) + "," + fmt.format(getY())+ ')';
     }
+
+
+    public static NWRotation2d getAngleBetween(NWTranslation2d a, NWTranslation2d b) {
+		double cos = a.dot(b) / (a.length * b.length);
+		if (Double.isNaN(cos)) {
+			return NWRotation2d.ZERO;
+		}
+
+		return NWRotation2d.fromRadians(Math.acos(MathUtils.clamp(cos, -1.0, 1.0)));
+	}
 
 
 

@@ -2,13 +2,14 @@ package ExternalLib.JackInTheBotLib.math.spline;
 
 import org.ejml.simple.SimpleMatrix;
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 
 public final class QuinticBezierSpline extends Spline {
     private static final SimpleMatrix BASIS_MATRIX = BezierSplineHelper.createBasisMatrix(5);
     private static final SimpleMatrix INVERSE_BASIS_MATRIX = BASIS_MATRIX.invert();
 
-    public QuinticBezierSpline(Vector2 start, Vector2 controlPoint1, Vector2 controlPoint2, Vector2 controlPoint3,
-                               Vector2 controlPoint4, Vector2 end) {
+    public QuinticBezierSpline(NWTranslation2d start, NWTranslation2d controlPoint1, NWTranslation2d controlPoint2,NWTranslation2d controlPoint3,
+    NWTranslation2d controlPoint4, NWTranslation2d end) {
         super(BASIS_MATRIX, BezierSplineHelper.createBasisWeightMatrix(start, controlPoint1, controlPoint2,
                 controlPoint3, controlPoint4, end));
     }
@@ -33,7 +34,7 @@ public final class QuinticBezierSpline extends Spline {
         return new QuinticBezierSpline(INVERSE_BASIS_MATRIX.mult(spline.getBasisMatrix()).mult(spline.getBasisWeightMatrix()));
     }
 
-    public Vector2[] getControlPoints() {
+    public NWTranslation2d[] getControlPoints() {
         return BezierSplineHelper.basisWeightMatrixToControlPoints(getBasisWeightMatrix());
     }
 }

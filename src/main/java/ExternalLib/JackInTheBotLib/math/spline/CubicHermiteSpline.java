@@ -3,6 +3,8 @@ package ExternalLib.JackInTheBotLib.math.spline;
 import org.ejml.simple.SimpleMatrix;
 import ExternalLib.JackInTheBotLib.math.Rotation2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWRotation2d;
 
 public class CubicHermiteSpline extends Spline {
     private static final SimpleMatrix BASIS_MATRIX = new SimpleMatrix(new double[][]{
@@ -13,13 +15,13 @@ public class CubicHermiteSpline extends Spline {
     });
     private static final SimpleMatrix INVERSE_BASIS_MATRIX = BASIS_MATRIX.invert();
 
-    public CubicHermiteSpline(Vector2 start, Vector2 startTangent,
-                              Vector2 end, Vector2 endTangent) {
+    public CubicHermiteSpline(NWTranslation2d start, NWTranslation2d startTangent,
+    NWTranslation2d end, NWTranslation2d endTangent) {
         this(HermiteSplineHelper.createBasisWeightMatrix(start, startTangent, end, endTangent));
     }
 
-    public CubicHermiteSpline(Vector2 start, Rotation2 startHeading,
-                              Vector2 end, Rotation2 endHeading) {
+    public CubicHermiteSpline(NWTranslation2d start, NWRotation2d startHeading,
+                              NWTranslation2d end, NWRotation2d endHeading) {
         this(HermiteSplineHelper.createBasisWeightMatrix(start, startHeading, end, endHeading));
     }
 

@@ -2,6 +2,7 @@ package ExternalLib.JackInTheBotLib.math.spline;
 
 import org.ejml.simple.SimpleMatrix;
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 
 import static ExternalLib.JackInTheBotLib.math.spline.SplineHelper.binomial;
 
@@ -20,22 +21,22 @@ class BezierSplineHelper {
         return matrix;
     }
 
-    public static SimpleMatrix createBasisWeightMatrix(Vector2... controlPoints) {
+    public static SimpleMatrix createBasisWeightMatrix(NWTranslation2d... controlPoints) {
         SimpleMatrix basisWeightMatrix = new SimpleMatrix(controlPoints.length, 2);
         for (int i = 0; i < controlPoints.length; i++) {
-            basisWeightMatrix.setRow(i, 0, controlPoints[i].x, controlPoints[i].y);
+            basisWeightMatrix.setRow(i, 0, controlPoints[i].getX(), controlPoints[i].getY());
         }
         return basisWeightMatrix;
     }
 
-    public static Vector2[] basisWeightMatrixToControlPoints(SimpleMatrix basisWeightMatrix) {
+    public static NWTranslation2d[] basisWeightMatrixToControlPoints(SimpleMatrix basisWeightMatrix) {
         if (basisWeightMatrix.numCols() != 2) {
             throw new IllegalArgumentException("Basis weight matrix must have 2 columns");
         }
 
-        Vector2[] controlPoints = new Vector2[basisWeightMatrix.numRows()];
+        NWTranslation2d[] controlPoints = new NWTranslation2d[basisWeightMatrix.numRows()];
         for (int i = 0; i < controlPoints.length; i++) {
-            controlPoints[i] = new Vector2(basisWeightMatrix.get(i, 0), basisWeightMatrix.get(i, 1));
+            controlPoints[i] = new NWTranslation2d(basisWeightMatrix.get(i, 0), basisWeightMatrix.get(i, 1));
         }
         return controlPoints;
     }

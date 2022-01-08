@@ -3,6 +3,9 @@ package ExternalLib.JackInTheBotLib.control;
 import ExternalLib.JackInTheBotLib.math.Rotation2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
 
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWRotation2d;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,12 +13,12 @@ import java.util.TreeMap;
 
 public final class SimplePathBuilder {
     private List<PathSegment> segmentList = new ArrayList<>();
-    private TreeMap<Double, Rotation2> rotationMap = new TreeMap<>();
+    private TreeMap<Double, NWRotation2d> rotationMap = new TreeMap<>();
 
-    private Vector2 lastPosition;
+    private NWTranslation2d lastPosition;
     private double length = 0.0;
 
-    public SimplePathBuilder(Vector2 initialPosition, Rotation2 initialRotation) {
+    public SimplePathBuilder(NWTranslation2d initialPosition,NWRotation2d initialRotation) {
         this.lastPosition = initialPosition;
 
         rotationMap.put(0.0, initialRotation);
@@ -27,7 +30,7 @@ public final class SimplePathBuilder {
         lastPosition = segment.getEnd().getPosition();
     }
 
-    private void addSegment(PathSegment segment, Rotation2 rotation) {
+    private void addSegment(PathSegment segment, NWRotation2d rotation) {
         addSegment(segment);
         rotationMap.put(length, rotation);
     }
@@ -36,36 +39,36 @@ public final class SimplePathBuilder {
         return new Path(segmentList.toArray(new PathSegment[0]), rotationMap);
     }
 
-    public SimplePathBuilder arcTo(Vector2 position, Vector2 center) {
+    public SimplePathBuilder arcTo(NWTranslation2d position, NWTranslation2d center) {
         addSegment(new ArcSegment(lastPosition, position, center));
         return this;
     }
 
-    public SimplePathBuilder arcTo(Vector2 position, Vector2 center, Rotation2 rotation) {
+    public SimplePathBuilder arcTo(NWTranslation2d position, NWTranslation2d center, NWRotation2d rotation) {
         addSegment(new ArcSegment(lastPosition, position, center), rotation);
         return this;
     }
 
-    public SimplePathBuilder lineTo(Vector2 position) {
+    public SimplePathBuilder lineTo(NWTranslation2d position) {
         addSegment(new LineSegment(lastPosition, position));
         return this;
     }
 
-    public SimplePathBuilder lineTo(Vector2 position, Rotation2 rotation) {
+    public SimplePathBuilder lineTo(NWTranslation2d position, NWRotation2d rotation) {
         addSegment(new LineSegment(lastPosition, position), rotation);
         return this;
     }
 
     public static final class ArcSegment extends PathSegment {
-        private final Vector2 center;
-        private final Vector2 deltaStart;
-        private final Vector2 deltaEnd;
+        private final NWTranslation2d center;
+        private final NWTranslation2d deltaStart;
+        private final NWTranslation2d deltaEnd;
         private final boolean clockwise;
 
-        public ArcSegment(Vector2 start, Vector2 end, Vector2 center) {
+        public ArcSegment(NWTranslation2d start, NWTranslation2d end, NWTranslation2d center) {
             this.center = center;
-            this.deltaStart = start.subtract(center);
-            this.deltaEnd = end.subtract(center);
+            this.deltaStart = (NWTranslation2d) start.minus(center);
+            this.deltaEnd = (NWTranslation2d)end.minus(center);
 
             clockwise = deltaStart.cross(deltaEnd) <= 0.0;
         }
@@ -74,35 +77,35 @@ public final class SimplePathBuilder {
         public State calculate(double distance) {
             double percentage = distance / getLength();
 
-            double angle = Vector2.getAngleBetween(deltaStart, deltaEnd).toRadians() *
+            double angle = NWTranslation2d.getAngleBetween(deltaStart, deltaEnd).getRadians() *
                     (clockwise ? -1.0 : 1.0) * percentage;
             return new State(
-                    center.add(deltaStart.rotateBy(Rotation2.fromRadians(angle))),
+                    (NWTranslation2d) center.plus(deltaStart.rotateBy(NWRotation2d.fromRadians(angle))),
                     // TODO: Use cross product instead of just adding 90deg when calculating heading
-                    deltaStart.rotateBy(Rotation2.fromRadians(angle + (clockwise ? -1.0 : 1.0) * 0.5 * Math.PI)).getAngle(),
+                    ((NWTranslation2d) deltaStart.rotateBy(NWRotation2d.fromRadians(angle + (clockwise ? -1.0 : 1.0) * 0.5 * Math.PI))).getAngle(),
                     1.0 / deltaStart.length
             );
         }
 
         @Override
         public double getLength() {
-            return deltaStart.length * Vector2.getAngleBetween(deltaStart, deltaEnd).toRadians();
+            return deltaStart.length *NWTranslation2d.getAngleBetween(deltaStart, deltaEnd).getRadians();
         }
     }
 
     public static final class LineSegment extends PathSegment {
-        private final Vector2 start;
-        private final Vector2 delta;
+        private final NWTranslation2d start;
+        private final NWTranslation2d delta;
 
-        private LineSegment(Vector2 start, Vector2 end) {
+        private LineSegment(NWTranslation2d start, NWTranslation2d end) {
             this.start = start;
-            this.delta = end.subtract(start);
+            this.delta = (NWTranslation2d) end.minus(start);
         }
 
         @Override
         public State calculate(double distance) {
             return new State(
-                    start.add(delta.scale(distance / getLength())),
+                    (NWTranslation2d) start.plus(delta.times(distance / getLength())),
                     delta.getAngle(),
                     0.0
             );

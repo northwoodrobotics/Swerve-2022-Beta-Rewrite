@@ -25,6 +25,11 @@ public class NWRotation2d extends Rotation2d implements Serializable, Interpolab
     }
 
 
+    public static NWRotation2d fromRadians(double angle){
+        return new NWRotation2d(Math.cos(angle), Math.sin(angle));
+    }
+
+
 
 
 
@@ -65,6 +70,12 @@ public class NWRotation2d extends Rotation2d implements Serializable, Interpolab
 
         return (NWRotation2d) NWRotation2d.fromDegrees(from + ((to - from) * t));
     }
+
+
+
+
+
+
 
 
 

@@ -3,6 +3,8 @@ package ExternalLib.JackInTheBotLib.math.spline;
 import org.ejml.simple.SimpleMatrix;
 import ExternalLib.JackInTheBotLib.math.Rotation2;
 import ExternalLib.JackInTheBotLib.math.Vector2;
+import ExternalLib.NorthwoodLib.MathWrappers.NWRotation2d;
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
 
 public class Spline {
     private final SimpleMatrix basisMatrix;
@@ -58,13 +60,13 @@ public class Spline {
         return derivative;
     }
 
-    public Vector2 getPoint(double t) {
+    public NWTranslation2d getPoint(double t) {
         SimpleMatrix result = SplineHelper.createPowerMatrix(getDegree(), t).mult(basisMatrix).mult(basisWeightMatrix);
 
-        return new Vector2(result.get(0), result.get(1));
+        return new NWTranslation2d(result.get(0), result.get(1));
     }
 
-    public Rotation2 getHeading(double t) {
+    public NWRotation2d getHeading(double t) {
         return derivative().getPoint(t).getAngle();
     }
 
@@ -72,8 +74,8 @@ public class Spline {
         Spline d = derivative(); // 1st derivative
         Spline dd = d.derivative(); // 2nd derivative
 
-        Vector2 dv = d.getPoint(t);
-        Vector2 ddv = dd.getPoint(t);
+        NWTranslation2d dv = d.getPoint(t);
+       NWTranslation2d ddv = dd.getPoint(t);
 
         // Curvature can be calculated using the following equation:
         // k = (dv x ddv) / (dv . dv)^(3/2)

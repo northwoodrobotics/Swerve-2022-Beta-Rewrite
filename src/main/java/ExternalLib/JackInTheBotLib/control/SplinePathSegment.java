@@ -3,6 +3,8 @@ package ExternalLib.JackInTheBotLib.control;
 import ExternalLib.JackInTheBotLib.math.Vector2;
 import ExternalLib.JackInTheBotLib.math.spline.Spline;
 
+import ExternalLib.NorthwoodLib.MathWrappers.NWTranslation2d;
+
 public final class SplinePathSegment extends PathSegment {
     private static final double LENGTH_SAMPLE_STEP = 1.0e-4;
 
@@ -29,10 +31,10 @@ public final class SplinePathSegment extends PathSegment {
     public double getLength() {
         if (!Double.isFinite(length)) {
             length = 0.0;
-            Vector2 p0 = spline.getPoint(0.0);
+            NWTranslation2d p0 = spline.getPoint(0.0);
             for (double t = LENGTH_SAMPLE_STEP; t <= 1.0; t += LENGTH_SAMPLE_STEP) {
-                Vector2 p1 = spline.getPoint(t);
-                length += p1.subtract(p0).length;
+                NWTranslation2d p1 = spline.getPoint(t);
+                length += ((NWTranslation2d) p1.minus(p0)).getLength();
 
                 p0 = p1;
             }
